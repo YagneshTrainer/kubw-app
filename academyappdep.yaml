@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: academyapp
+  labels:
+    app: academyapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: academyapp
+  template:
+    metadata:
+      labels:
+        app: academyapp
+  spec:
+  containers:
+    - name: academyapp
+      image: innovativeacademy/academyapp
+      ports:
+        - name: academyapp-port
+          containerPort: 8080
+  initContainers:
+    - name: init-mydb
+      image: busybox
+      command: ['sh', '-c', 'until nslookup db01; do echo waiting for mydb; sleep 2; done;']
+    - name: init-mc01
+      image: busybox
+      command: ['sh', '-c', 'until nslookup mc01; do echo waiting for memcached; sleep 2; done;']
+
+        # After this we need to create a service definition file again but a Loadbalancer
